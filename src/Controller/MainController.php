@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Scene1;
+use App\Repository\Scene1Repository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -84,10 +85,11 @@ class MainController extends AbstractController
     /**
      * @Route("/gallery", name="gallery")
      */
-    public function gallery(): Response
+    public function gallery(Scene1Repository $repo): Response
     {
+        $scenes = $repo -> findAll(); 
         return $this->render('main/gallery.html.twig', [
-            'controller_name' => 'MainController',
+            'scenes' => $scenes,
         ]);   
     }
 

@@ -6,6 +6,10 @@
 
 <div class="mainContainer">
     <h1>GALLERY</h1>
+    {% for scene in scenes %}
+            <img style="max-width: 300px" src="{{ vich_uploader_asset(scene, 'imageFile') }}" alt="{{ scene.user.name }}">
+
+    {% endfor %}
 
 
 </div>
