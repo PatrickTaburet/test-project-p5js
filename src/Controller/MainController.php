@@ -28,12 +28,12 @@ class MainController extends AbstractController
         $color = $request->request->get('color');
         $weight = $request->request->get('weight');
         $numLine = $request->request->get('numLine');
-
+        dump('njdnefjnekn');
         //utilisateur temporaire
         $user = $this->getDoctrine()
         ->getRepository(User::class)
         ->find(2);
-
+       
         if ($color !== null && $weight !== null && $numLine !== null) {
             $data = new Scene1;
             $data ->setColor($color);
@@ -44,12 +44,24 @@ class MainController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($data);
             $entityManager->flush();
-
-            return new Response('Data received and saved successfully!', Response::HTTP_OK);
-        } else {
-            // Retourner une réponse d'erreur si des données sont manquantes
+           
+            return new Response('Data successfully saved!', Response::HTTP_OK);
+            // redirection managed in javascript
+        } 
             return new Response('Error: Missing data!', Response::HTTP_BAD_REQUEST);
-        }
+        
+    }
 
+    
+    /**
+     * @Route("/gallery", name="gallery")
+     */
+    public function gallery(): Response
+    {
+        return $this->render('main/gallery.html.twig', [
+            'controller_name' => 'MainController',
+        ]);   
     }
 }
+
+

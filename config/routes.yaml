@@ -5,3 +5,7 @@
 #     path: /sendData
 #     controller: App\Controller\YourController::sendDataAction
 #     methods: [POST]
+
+# gallery:
+#     path: /gallery
+#     controller: App\Controller\MainController::gallery

@@ -28,7 +28,7 @@ function draw(){
       walker.velocity();
       walker.move();
       walker.draw();
-      console.log(walker.velocityX)
+    //   console.log(walker.velocityX)
       // console.log (walker.color.levels)
       // console.log (uiBrightness.getValue())
     }
@@ -154,7 +154,7 @@ function sendData(){
     formData.append('color', color);
     formData.append('weight', weight);
     formData.append('numLine', numLine);
-    
+    // saveCanvas();
     fetch('/sendData', {
         method: 'POST',
         body: formData
@@ -167,6 +167,8 @@ function sendData(){
     })
     .then(data => {
         console.log('Data sent successfully:', data);
+    // Redirection vers la page 'gallery'
+        window.location.href = '/gallery';
     })
     .catch(error => {
         console.error('There was a problem sending the data:', error);
