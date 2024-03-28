@@ -150,27 +150,78 @@ function sendData(){
     let weight = uiWeight.getValue()
     let numLine = lineNumber.getValue()
     
-    const formData = new URLSearchParams();
-    formData.append('color', color);
-    formData.append('weight', weight);
-    formData.append('numLine', numLine);
-    // saveCanvas();
-    fetch('/sendData', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.text();
-    })
-    .then(data => {
-        console.log('Data sent successfully:', data);
-    // Redirection vers la page 'gallery'
-        window.location.href = '/gallery';
-    })
-    .catch(error => {
-        console.error('There was a problem sending the data:', error);
-    });
+   
+
+    // Capture image of the canva
+
+    // Capture l'image du canva dans un format base64
+    const myCanvas = document.getElementById("defaultCanvas0");
+    const imageBase64 = myCanvas.toDataURL();
+    console.log(imageBase64);
+    // const imageBase64 = canvas.elt.toDataURL();
+
+    // Créez une nouvelle image à partir de l'URL base64
+    const image = new Image();
+    image.src = imageBase64;
+
+    // Lorsque l'image est chargée, envoyez-la au serveur
+    image.onload = function() {
+      const formData = new FormData(); // or new URLSearchParams()
+      formData.append('color', color);
+      formData.append('weight', weight);
+      formData.append('numLine', numLine);
+      formData.append('file', image.src);
+
+      // saveCanvas();
+      fetch('/sendData', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.text();
+      })
+      .then(data => {
+          console.log('Data sent successfully:', data);
+      // Redirection vers la page 'gallery'
+          // window.location.href = '/gallery';
+      })
+      .catch(error => {
+          console.error('There was a problem sending the data:', error);
+      });
+    };
 }
+
+// function capture() {
+//   // Capture l'image du canva dans un format base64
+//   const imageBase64 = canvas.elt.toDataURL();
+
+//   // Créez une nouvelle image à partir de l'URL base64
+//   const image = new Image();
+//   image.src = imageBase64;
+
+//   // Lorsque l'image est chargée, envoyez-la au serveur
+//   image.onload = function() {
+//     // Création d'une nouvelle FormData
+//     const formData = new FormData();
+//     // Ajoutez l'image à la FormData
+//     formData.append('file', image.src);
+
+//     // Envoi de la requête HTTP POST pour uploader l'image
+//     fetch('/upload', {
+//       method: 'POST',
+//       body: formData,
+//     })
+//     .then(function(response) {
+//       console.log('Image uploaded successfully', response);
+//     })
+//     .catch(function(error) {
+//       console.error('Error uploading image:', error);
+//     });
+//   }
+// }
+
+// Appelez la fonction capture() lorsque vous cliquez sur un bouton
+// button.mousePressed(capture);

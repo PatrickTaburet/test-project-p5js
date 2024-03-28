@@ -1,0 +1,15 @@
+vich_uploader:
+    db_driver: orm
+    metadata:
+        type: annotation
+
+    mappings:
+        sceneImages:
+            uri_prefix: /images/sceneImages
+            upload_destination: '%kernel.project_dir%/public/images/sceneImages'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+            #inject_on_load: false
+            # inject_on_load: default false, should the file be injected into the uploadable entity when it is loaded from the data store. The object will be an instance of Symfony\Component\HttpFoundation\File\File.
