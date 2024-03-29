@@ -8,9 +8,11 @@ use App\Repository\Scene1Repository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Vich\UploaderBundle\Handler\DownloadHandler;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MainController extends AbstractController
 {
@@ -92,6 +94,55 @@ class MainController extends AbstractController
             'scenes' => $scenes,
         ]);   
     }
+    /**
+     * @Route("/newScene/{id}", name="newScene", methods= {"GET"}))
+     */
+    public function newScene(Scene1Repository $repo, SerializerInterface $serializer, $id): Response
+    {
+        $scene = $repo -> find($id); 
+
+        // NORMALIZED + ENCODE METHOD :
+        // //transform complex object in an associative array (only group sceneDataRecup to avoid infinite loop with the user entity)
+        // $sceneNormalized = $normalizer->normalize($scene, null, ['groups'=> 'sceneDataRecup']);
+        // // then encore into json format
+        // $json = json_encode($sceneNormalized);
+
+        // SERIALIZER METHOD :
+        $json = $serializer->serialize($scene,'json',['groups'=> 'sceneDataRecup']);
+        
+        return $this->render('main/newScene.html.twig', [
+            'scene' => $json,
+        ]);   
+    }
+
+       
+    // /**
+    // * @Route("/update/{id}", name="update", methods= {"GET", "POST"})
+    // */
+    // public function Update(Request $request, ArticleRepository $repo, $id): Response
+    // {
+    //     $article = $repo-> find($id);
+    //     $form = $this->createForm(ArticleType::class, $article); // creation du form
+    //     $form -> handleRequest($request);  // Gestion des données envoyées
+    //     if ( $form->isSubmitted() && $form->isValid()){
+    //         $sendDatabase = $this->getDoctrine()
+    //                              ->getManager();
+    //         $sendDatabase->persist($article);
+    //         $sendDatabase->flush();
+
+    //         $this->addFlash('notice', 'Modification réussie !!'); 
+          
+    //         return $this->redirectToRoute('article_list');
+    //     }
+    //     return $this->render('article/updateForm.html.twig', [
+    //         'controller_name' => 'MainController',
+    //         'form' => $form->createView()
+    //     ]);
+    // }
+
+
+
+
 
     //  /**
     //  * @Route("/upload", name="upload", methods={"POST"})

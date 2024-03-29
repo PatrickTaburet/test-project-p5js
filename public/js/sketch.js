@@ -1,16 +1,38 @@
 
 // --------------------- Random walkers --------------------------
+//--- - - - - - - - -   - - - - --- -- -- - -
 
+//Catch data from DB:
+let dataScene;
+function preload() {
+  const dataSceneJson = document.getElementById('dataScene').dataset.scene;
+  if (dataSceneJson) {
+    dataScene = JSON.parse(dataSceneJson);
+  }  else {
+    console.log("No scene data found");
+  }
+}
+// console.log(dataScene.color);
 // line walker
 
 let cell = 1;
 let walkers = [];
 
-
+let lineSlider;
+let colorSlider;
+let weightSlider;
 function setup() {
+
   createCanvas(windowWidth, windowHeight);
   colorMode(HSB);
   background(0,0,0);
+  let defaultValueLine = dataScene ? dataScene.numLine : 100;
+  let defaultValueColor = dataScene ? dataScene.color : 5;
+  let defaultValueWeight = dataScene ? dataScene.weight : 8;
+  console.log(defaultValueLine);
+  lineSlider = createSlider(0, 100, defaultValueLine, 1).position(10, 10).size(80);
+  colorSlider = createSlider(0, 360, defaultValueColor, 1).position(10, 30).size(80);
+  weightSlider = createSlider(0, 10, defaultValueWeight, 1).position(10, 50).size(80);
 
   // Create un first walker serie in the center when app is open
 
@@ -28,7 +50,7 @@ function draw(){
       walker.velocity();
       walker.move();
       walker.draw();
-    //   console.log(walker.velocityX)
+      // console.log(walker.velocityX)
       // console.log (walker.color.levels)
       // console.log (uiBrightness.getValue())
     }
@@ -44,7 +66,7 @@ class Walker {
     this.py = y;
     this.velocityX = random(-uiVelocity.getValue(), uiVelocity.getValue());
     this.velocityY = random(-uiVelocity.getValue(),uiVelocity.getValue());
-    this.color = color(random(uiColor.getValue(), (uiColor.getValue() + 200)), uiSaturation.getValue(), uiBrightness.getValue(), uiOpacity.getValue());
+    this.color = color(random(colorSlider.value(), (colorSlider.value() + 200)), uiSaturation.getValue(), uiBrightness.getValue(), uiOpacity.getValue());
     this.draw();
   }
   velocity () {
@@ -64,20 +86,20 @@ class Walker {
     this.py = this.y;
     noFill();
     noiseDetail(uiNoiseOctave.getValue(), uiNoiseFalloff.getValue());
-    stroke(random(uiColor.getValue(), (uiColor.getValue() + 200)), uiSaturation.getValue(), uiBrightness.getValue(), uiOpacity.getValue());
+    stroke(random(colorSlider.value(), (colorSlider.value() + 200)), uiSaturation.getValue(), uiBrightness.getValue(), uiOpacity.getValue());
     strokeCap(SQUARE);
     blendMode(SCREEN);
     // smooth();
-    strokeWeight(uiWeight.getValue());
+    strokeWeight(weightSlider.value());
   }
   
 }
 function mouseClicked () {
-  // walkers = [];   -> uncomment to set only one walker for one click and erase the others
+    //walkers = []; -> uncomment to set only one walker for one click and stop the others walkers moves
   noiseSeed(random(50));
-  for (let i = 0; i < lineNumber.getValue(); i++){
+  for (let i = 0; i < lineSlider.value(); i++){
     walkers.push(new Walker(mouseX, mouseY));
-  
+
   }
   
 }
@@ -90,6 +112,7 @@ function reset () {
 
 // GUI interface : 
 
+
 let walkersProps = {
   'Color' : 110,
   'Saturation' : 90,
@@ -98,12 +121,12 @@ let walkersProps = {
   'Weight' : 3,
   'Amount' : window.innerWidth < 600 ? 400 : 1000,
   'Random' : 0.2,
-  'Number of lines' : 10,
+  'Number of lines' : dataScene ? dataScene.numLine : 5,
   'Velocity' : 5,
   'noiseFalloff' : 0.5,
   'noiseOctave' : 4
-
 };
+
 
 let props = walkersProps;
 let gui = new dat.GUI();
@@ -113,13 +136,13 @@ let colorFolder = walkersFolder.addFolder("Colors");
 let styleFolder = walkersFolder.addFolder("Style");
 let moveFolder = walkersFolder.addFolder("Move");
 // Props by folders
-let uiColor = colorFolder.add(props, 'Color', 0, 360, 10);
+// let uiColor = colorFolder.add(props, 'Color', 0, 360, 10);
 let uiSaturation = colorFolder.add(props, 'Saturation', 0, 100, 5);
 let uiBrightness = colorFolder.add(props, 'Brightness', 0, 100, 5);
 let uiOpacity = colorFolder.add(props, 'Opacity', 0, 1, 0.01);
 
-let uiWeight = styleFolder.add(props, 'Weight', 0, 10, 0.5);
-let lineNumber = styleFolder.add(props, 'Number of lines', 0, 100, 1);
+// let uiWeight = styleFolder.add(props, 'Weight', 0, 10, 0.5);
+// let lineNumber = styleFolder.add(props, 'Number of lines', 0, 100, 1);
 
 let uiVelocity = moveFolder.add(props, 'Velocity', 0, 15, 0.1);
 let uiNoiseOctave = moveFolder.add(props, 'noiseOctave', 0, 10, 1);
@@ -128,12 +151,12 @@ let uiNoiseFalloff = moveFolder.add(props, 'noiseFalloff', 0, 1, 0.05);
 // gui.addColor(props, "Color"); -> Color picker pannel
 
 
-uiColor.onChange(reset);
+// uiColor.onChange(reset);
 uiSaturation.onChange(reset);
 uiBrightness.onChange(reset);
 uiOpacity.onChange(reset);
-uiWeight.onChange(reset);
-lineNumber.onChange(reset);
+// uiWeight.onChange(reset);
+// lineNumber.onChange(reset);
 uiNoiseOctave.onChange(reset);
 uiNoiseFalloff.onChange(reset);
 
@@ -146,9 +169,12 @@ gui.add(obj,'Save data');
 
 
 function sendData(){
-    let color = uiColor.getValue()
-    let weight = uiWeight.getValue()
-    let numLine = lineNumber.getValue()
+  let color = colorSlider.value()
+  let weight = weightSlider.value()
+  let numLine = lineSlider.value()
+    // let color = uiColor.getValue()
+    // let weight = uiWeight.getValue()
+    // let numLine = lineNumber.getValue()
     
    
 
@@ -157,7 +183,6 @@ function sendData(){
     // Capture l'image du canva dans un format base64
     const myCanvas = document.getElementById("defaultCanvas0");
     const imageBase64 = myCanvas.toDataURL();
-    console.log(imageBase64);
     // const imageBase64 = canvas.elt.toDataURL();
 
     // Créez une nouvelle image à partir de l'URL base64

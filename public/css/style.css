@@ -9,4 +9,6 @@ canvas {
     display: block;
     margin: auto; /* centers the canvas */
 }
-  
+.cardGallery{
+    margin : 10px;
+}
